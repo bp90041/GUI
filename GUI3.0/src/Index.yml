@@ -1,0 +1,11 @@
+videos: [Left, Right, Iso, Front]
+survey:
+ - question: "what?"
+   answer: ["this","that","the other thing"]
+   type: "multi"
+ - question: "why?"
+   answer: ["because","iono","none of your business"]
+   type: "single"
+ - question: "when?"
+   answer: ["1999","2000","2001"]
+   type: "check"
