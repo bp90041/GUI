@@ -21,6 +21,7 @@ import net.sourceforge.yamlbeans.YamlReader;
 import net.sourceforge.yamlbeans.YamlWriter;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -42,13 +43,13 @@ import java.util.Set;
 public class GUI {
 	private static final String ANSWER = "answer";
 	private static final String QUESTION = "question";
-	private static final String TYPE = "type";
-	private static final String SETTING = "settings";
+	private static final String TYPES = "type";
 	private static final String SURVEY = "survey";		
-	private HashMap<String, > dataholder = new HashMap<String, ArrayList>();
-	private HashMap<String, String> selectedans = new HashMap<String, String>();
-	private HashMap<String, Integer> selectedans2 = new HashMap<String, Integer>();
+	//private HashMap<String, String> selectedans = new HashMap<String, String>();
+	//private HashMap<String, Integer> selectedans2 = new HashMap<String, Integer>();
+	private ArrayList<Entry> data = new ArrayList<Entry>();
 	private JFrame frame;
+	private ArrayList<?> list;
 	private Map yaml;
 	public GUI(String yamlfile) throws FileNotFoundException, YamlException{
 		// create frame for class
@@ -66,15 +67,14 @@ public class GUI {
 		for (int i = 0; i < surv.size(); i++) {
             ArrayList<String> ans = (ArrayList<String>)surv.get(i).get(ANSWER);
             String quest = (String)surv.get(i).get(QUESTION);
-            String type = (String)surv.get(i).get(TYPE);
+            String style = (String)surv.get(i).get(TYPES);
             
-            ArrayList<Integer> setting = (ArrayList<Integer>)surv.get(i).get(SETTING);
-            // storing question and button group of answers in dataholder
-            this.dataholder.put(quest, ans);
-            this.dataholder2.put(quest, type);
-            this.dataholder3.put(quest, setting);
-
             
+            
+            Entry someQuestion = new Entry(quest, ans, style);
+            
+            this.data.add(someQuestion);
+     
 		}
 	}
 	
@@ -87,76 +87,56 @@ public class GUI {
 		this.frame.setLayout(new BorderLayout());
 		this.frame.setVisible(true);
 		
-		
-		// SURVEY
 		JPanel panelmain = new JPanel();
-		// iterate through dataholder
-		Iterator it = this.dataholder.entrySet().iterator();
-		Iterator it2 = this.dataholder2.entrySet().iterator();
-		Iterator it3 = this.dataholder3.entrySet().iterator();
-		while(it.hasNext()){
-			// get question and answer data
-			
-			Map.Entry<String, ArrayList<String>> q = (Map.Entry<String, ArrayList<String>>)it.next();
-			ArrayList<String> a = q.getValue();
-			Map.Entry<String, String> q2 = (Map.Entry<String, String>)it2.next();
-			String t = q2.getValue();
-			Map.Entry<String, ArrayList<Integer>> q3 = (Map.Entry<String, ArrayList<Integer>>)it3.next();
-			ArrayList<Integer> s = (ArrayList<Integer>)q3.getValue();
-			Integer test = 
-			System.out.println(s);
-			
+		
+	
+		for(Entry aEntry : data) {
 			// create question label
-			JLabel label = new JLabel(q.getKey());
+			JLabel label = new JLabel(aEntry.getQuestion());
 			JPanel panel = new JPanel();
 			panel.add(label,0);
-			// create answer buttons
-			for(int i=0; i < a.size(); i++){
-				if(t.equals("multi")){
-
-					JButton btn = new JButton(a.get(i));
-					btn.addActionListener(new SelectAction());
-					
-					panel.add(btn);
-					
-				}
-				else if(t.equals("single")){
-					JRadioButton btn = new JRadioButton(a.get(i));
-					btn.addActionListener(new SelectRadioAction());
-					
-					panel.add(btn);
-					
-					
-				}
-				else if(t.equals("check")){
-					JCheckBox btn = new JCheckBox(a.get(i));
-					btn.addActionListener(new SelectCheckAction());
-					
-					panel.add(btn);
-					
-					
-				}
+			
+			//Create buttons
+			//Slider?
+			if (aEntry.getType().equals(Type.SLIDER)){
+				System.out.println(aEntry.getAnswers().get(2));
+				int start = Integer.parseInt((String)aEntry.getAnswers().get(0));
+				int stop = Integer.parseInt((String)aEntry.getAnswers().get(1));
+				int step = Integer.parseInt((String)aEntry.getAnswers().get(2));
 				
-				
-			}
-			if(t.equals("slide")){
-				JSlider slide = new JSlider(JSlider.HORIZONTAL, q3.get(0), q3.getValue().get(1), q3.getValue().get(2));
+				JSlider slide = new JSlider(JSlider.HORIZONTAL, start, stop, step);
 				panel.add(slide);
 				slide.addChangeListener(new ChangeListener(){
 					public void stateChanged(ChangeEvent e){
 						JSlider slide = (JSlider)e.getSource();
 						JPanel panel = (JPanel)slide.getParent();
-				        String q = ((JLabel)panel.getComponent(0)).getText();
-				        selectedans2.put(q,slide.getValue()); 
-				        System.out.println(selectedans2);
 					}
-					
-					
 				});
+			} else { // Not a slider
+				for(Object anAnswer : aEntry.getAnswers()){ 
+					// anAnswer is technically an int or string. Only time it is an integer is when the Entry is a slider
+					if(aEntry.getType().equals(Type.BUTTON)){
+						JButton btn = new JButton((String)anAnswer);
+						btn.addActionListener(new SelectAction());
+						panel.add(btn);
+					} else if(aEntry.getType().equals(Type.CHECK)) {
+						JCheckBox btn = new JCheckBox((String)anAnswer);
+						btn.addActionListener(new SelectCheckAction());
+						panel.add(btn);
+					} else if(aEntry.getType().equals(Type.RADIO)) {
+						JCheckBox btn = new JCheckBox((String)anAnswer);
+						btn.addActionListener(new SelectCheckAction());
+						panel.add(btn);
+					} else {
+						System.out.println("Rut Row - we have an error... The entry is not a slider," +
+								" but it is also not a button, check, or radio...");
+					}
+				}
 			}
-			// add all to main panel
 			panelmain.add(panel);
 		}
+		
+		
 		this.frame.add(panelmain);
 		panelmain.setLayout(new BoxLayout(panelmain, BoxLayout.Y_AXIS));
         
@@ -174,6 +154,9 @@ public class GUI {
 	public class SubmitAction implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 	        System.out.println("You have submitted your answer");
+	        JButton Submit = (JButton)(e.getSource());
+	        //Submit.setBackground(Color.GREEN);
+	        /*
 	        if(selectedans.size()+selectedans2.size()==dataholder.size()){
 	        	System.out.println("and congrats you answered everything");
 	        	JFrame frame2 = new JFrame("Answer Submitted");
@@ -187,7 +170,7 @@ public class GUI {
 	        }
 	        else{
 	        	System.out.println("but slow down you didn't finish dis");	
-	        }
+	        }*/
 	     
 
 
@@ -202,8 +185,9 @@ public class GUI {
 	        String a = btn.getText();
 	        JPanel panel = (JPanel)btn.getParent();
 	        String q = ((JLabel)panel.getComponent(0)).getText();
-	        selectedans.put(q,a); 
-	        System.out.println(selectedans);
+	        //btn.setBackground(Color.GREEN);
+	        //selectedans.put(q,a); 
+	        //System.out.println(selectedans);
 		}
 	}
 	
@@ -214,8 +198,9 @@ public class GUI {
 	        String a = btn.getText();
 	        JPanel panel = (JPanel)btn.getParent();
 	        String q = ((JLabel)panel.getComponent(0)).getText();
-	        selectedans.put(q,a); 
-	        System.out.println(selectedans);
+	        //btn.setBackground(Color.GREEN);
+	        //selectedans.put(q,a); 
+	        //System.out.println(selectedans);
 		}
 	}
 	public class SelectCheckAction implements ActionListener{
@@ -225,8 +210,9 @@ public class GUI {
 	        String a = btn.getText();
 	        JPanel panel = (JPanel)btn.getParent();
 	        String q = ((JLabel)panel.getComponent(0)).getText();
-	        selectedans.put(q,a); 
-	        System.out.println(selectedans);
+	       //btn.setBackground(Color.GREEN);
+	        //selectedans.put(q,a); 
+	        //System.out.println(selectedans);
 		}
 	}
 
