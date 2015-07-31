@@ -1,5 +1,0 @@
-videos: [Left, Right, Iso, Front]
-question: ["How happy is this man?","How sad is this man?","What is this man feeling?"]
-
-answer: [2,4,anger]
-
