@@ -29,9 +29,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -47,14 +49,16 @@ public class GUI {
 	private static final String QUESTION = "question";
 	private static final String TYPES = "type";
 	private static final String SURVEY = "survey";		
-	private ButtonGroup bgroup = new ButtonGroup();
-	private ArrayList<Entry> data = new ArrayList<Entry>();
-	private HashMap<String, ArrayList<String>> enteredans3 = new HashMap<String, ArrayList<String>>();
-	private HashMap<String, Integer> enteredans2 = new HashMap<String, Integer>();
-	private HashMap<String, String> enteredans = new HashMap<String, String>();
-	private ArrayList<String> list1 = new ArrayList<String>();
-	private JFrame frame;
-	private Map yaml;
+	private ButtonGroup bgroup = new ButtonGroup(); //radio button groups
+	private ArrayList<Entry> data = new ArrayList<Entry>(); //holder of all questions, answers, types
+	private HashMap<String, ArrayList<String>> enteredans3 = new HashMap<String, ArrayList<String>>(); //answer holder of checkboxes
+	private HashMap<String, Integer> enteredans2 = new HashMap<String, Integer>(); //answer holder of slider
+	private HashMap<String, String> enteredans = new HashMap<String, String>(); //answer holder for all else (including text boxes)
+	private ArrayList<String> list1 = new ArrayList<String>();//answer holder of checkbox (doesn't hold questions)
+	private JFrame frame; //main frame
+	private Map yaml; //yaml map
+	
+	
 	public GUI(String yamlfile) throws FileNotFoundException, YamlException{
 		// create frame for class
 		this.frame = new JFrame("Annotation Framework");
@@ -73,104 +77,94 @@ public class GUI {
             String quest = (String)surv.get(i).get(QUESTION);
             String style = (String)surv.get(i).get(TYPES);
             
-            
-            
+            //after all yaml objects are parsed, read through and place them within data through Entry           
             Entry someQuestion = new Entry(quest, ans, style);
-            
             this.data.add(someQuestion);
      
 		}
 	}
-	
+
 	
 	public void run(){
-		//set up features/attribute of jframe
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.frame.setSize(600,300);
-		this.frame.setLocationRelativeTo(null);
-		this.frame.setLayout(new BorderLayout());
-
+		JPanel panelmain = new JPanel(); //create main panel
 		
-		JPanel panelmain = new JPanel();
-		
-		System.out.println(enteredans);
-		for(Entry aEntry : data) {
+		for(Entry aEntry : data) {	//for all entries in data
 			// create question label
 			JLabel label = new JLabel(aEntry.getQuestion());
 			JPanel panel = new JPanel();
 			panel.add(label,0);
 			
-			// TODO make this a switch statement
-			//Create buttons
-			//Slider?1
-			if (aEntry.getType().equals(Type.SLIDER)){
-				JSlider slide = new JSlider(JSlider.HORIZONTAL, 0, (aEntry.getAnswers().size()-1), 1);
-		        slide.setMajorTickSpacing(1);
-				slide.setPaintTicks(true);
-		        
-		        Hashtable<Integer, JLabel> labels =
-		                new Hashtable<Integer, JLabel>();
-		        for(int i=0; i<aEntry.getAnswers().size(); i++){
-		        	 labels.put(i, new JLabel(aEntry.getAnswers().get(i)));
-				      
-		        }
-		       
-		        slide.setLabelTable(labels);
-		        // TODO make this dynamic
-		        slide.setPreferredSize(new Dimension(550, 60));		 
-		        slide.setPaintLabels(true);
-		        panel.add(slide);
-		        slide.addChangeListener(new ChangeListener(){
-					public void stateChanged(ChangeEvent e){
-						JSlider slide = (JSlider)e.getSource();
-						JPanel panel = (JPanel)slide.getParent();
-						String q = ((JLabel)panel.getComponent(0)).getText();
-						// TODO query arraylist data by question and get answer by index
-						enteredans2.put(q,slide.getValue());
-						System.out.println(enteredans2);
-						}
-				});
-			} else { // Not a slider
-				for(Object anAnswer : aEntry.getAnswers()){ 
-					// anAnswer is technically an int or string. Only time it is an integer is when the Entry is a slider
-					if(aEntry.getType().equals(Type.BUTTON)){
-						JButton btn = new JButton((String)anAnswer);
-						btn.addActionListener(new SelectAction());
-						panel.add(btn);
-					} else if(aEntry.getType().equals(Type.CHECK)) {
-							JCheckBox btn = new JCheckBox((String)anAnswer);
-						btn.addActionListener(new SelectCheckAction());
-						panel.add(btn);
-					} else if(aEntry.getType().equals(Type.RADIO)) {
-						JRadioButton btn = new JRadioButton((String)anAnswer);
-						bgroup.add(btn);
-						btn.addActionListener(new SelectRadioAction());
-						panel.add(btn);
-						
-					} else {
-						System.out.println("Rut Row - we have an error... The entry is not a slider," +
-								" but it is also not a button, check, or radio...");
-					
-					}
-				
+			for(Object anAnswer : aEntry.getAnswers()){ //for all Objects in answers 
+			switch(aEntry.getType()){	//switch through all types
+				case BUTTON:	//if type is button...
+					JButton btn = new JButton((String)anAnswer);
+					btn.addActionListener(new SelectAction());
+					panel.add(btn);
+					break;
+				case SLIDER:	//if type is slider...
+					JSlider slide = new JSlider(JSlider.HORIZONTAL, 0, (aEntry.getAnswers().size()-1), 1);
+			        slide.setMajorTickSpacing(1);
+					slide.setPaintTicks(true);
+					// TODO slider not appearing??
+			        Hashtable<Integer, JLabel> labels =
+			                new Hashtable<Integer, JLabel>();
+			        for(int i=0; i<aEntry.getAnswers().size(); i++){
+			        	 labels.put(i, new JLabel(aEntry.getAnswers().get(i)));
+					      
+			        }
+			       
+			        slide.setLabelTable(labels);
+			        Integer fwidth = (Integer)this.frame.getWidth();
+			        Integer fheight = (Integer)this.frame.getHeight();
+			        slide.setPreferredSize(new Dimension(fwidth-(fwidth/10),fheight/4));		 
+			        slide.setPaintLabels(true);
+			        panel.add(slide);
+			        slide.addChangeListener(new ChangeListener(){
+						public void stateChanged(ChangeEvent e){
+							JSlider slide = (JSlider)e.getSource();
+							JPanel panel = (JPanel)slide.getParent();
+							String q = ((JLabel)panel.getComponent(0)).getText();
+							// TODO query arraylist data by question and get answer by index
+							enteredans2.put(q,slide.getValue());
+							System.out.println(enteredans2);
+							}
+					});
+					break;
+				case CHECK:	//if type is check
+					JCheckBox check = new JCheckBox((String)anAnswer);
+					check.addActionListener(new SelectCheckAction());
+					panel.add(check);
+					break;
+				case RADIO:	//if type is radio
+					JRadioButton radio = new JRadioButton((String)anAnswer);
+					bgroup.add(radio);
+					radio.addActionListener(new SelectRadioAction());
+					panel.add(radio);
+					break;
+				case TEXT: //if type is textfield
+					JTextField text = new JTextField((String)anAnswer, 50);
+					text.addActionListener(new SelectTextAction());
+					panel.add(text);
+					break;
 				}
-			}
-			
-			panelmain.add(panel);
 		}
-		
-		
+		panelmain.add(panel);
+		}
 		this.frame.add(panelmain);
 		panelmain.setLayout(new BoxLayout(panelmain, BoxLayout.Y_AXIS));
-        
-	    	
+           	
     	//SUBMIT
 		JButton submit = new JButton("Submit");
 		submit.addActionListener(new SubmitAction());
 		panelmain.add(submit);
-		
+		this.frame.setLocationRelativeTo(null);
 		this.frame.setVisible(true);
+		this.frame.pack();
+		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		this.frame.setLayout(new BorderLayout());
 	}
+	
 	public class SubmitAction implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 	        System.out.println("You have submitted your answer");
@@ -204,40 +198,34 @@ public class GUI {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-		         
-	        }
+				
+		        }
 	        else{
-	        	System.out.println("but slow down you didn't finish dis");	
+	        	System.out.println("but you never answered everything.");	
 	        }
-	     
-
+	     }
 		
-
-		}
 	}
-
 	
 	public class SelectAction implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 	        System.out.println("You have selected ");
-	        
 	        JButton btn= (JButton)e.getSource();
 	        String a = btn.getText();
 	        JPanel panel = (JPanel)btn.getParent();
 	        String q = ((JLabel)panel.getComponent(0)).getText();
 	        enteredans.put(q,a);
 	        System.out.println(enteredans);
-	        
-	       
+
 		}                                                                                                                                                                                                                                                                                                                                                                                                                  
 	}
 	
 	public class SelectRadioAction implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 	        System.out.println("You have selected ");
-	        JRadioButton btn= (JRadioButton)e.getSource();
-			String a = btn.getText();
-	        JPanel panel = (JPanel)btn.getParent();
+	        JRadioButton radio= (JRadioButton)e.getSource();
+			String a = radio.getText();
+	        JPanel panel = (JPanel)radio.getParent();
 	        String q = ((JLabel)panel.getComponent(0)).getText();
 	        enteredans.put(q,a);
 	        System.out.println(enteredans);
@@ -247,22 +235,34 @@ public class GUI {
 	public class SelectCheckAction implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 	  	    System.out.println("You have selected ");
-	        JCheckBox btn= (JCheckBox)e.getSource();
-	        String a = btn.getText();
+	        JCheckBox check= (JCheckBox)e.getSource();
+	        String a = check.getText();
 	        list1.add(a);
-	        JPanel panel = (JPanel)btn.getParent();
+	        JPanel panel = (JPanel)check.getParent();
 	        String q = ((JLabel)panel.getComponent(0)).getText();
-	        if(btn.isSelected() == false){
+	        if(check.isSelected() == false){
 	        	list1.remove(a);
 	        	list1.remove(a);
 	        	enteredans3.put(q, list1); 
 	        	}
-	        else if(btn.isSelected() == true){
+	        else if(check.isSelected() == true){
 	        	enteredans3.put(q,list1);
 	        }
 	        System.out.println(enteredans3);
 	        
 	       
+		}
+	}
+	public class SelectTextAction implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+	        System.out.println("You have selected ");
+	        JTextField text= (JTextField)e.getSource();
+			String a = text.getText();
+	        JPanel panel = (JPanel)text.getParent();
+	        String q = ((JLabel)panel.getComponent(0)).getText();
+	        enteredans.put(q,a);
+	        System.out.println(enteredans);
+	        
 		}
 	}
 	/*

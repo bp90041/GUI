@@ -14,5 +14,5 @@ survey:
    type: "SLIDER"
  - question: "Write 500 words"
    answer: ["Start Here"]
-   type: "TEXT"
+   type: "Text"
 
