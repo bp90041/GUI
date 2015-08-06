@@ -1,17 +1,10 @@
 videos: [Left, Right, Iso, Front]
 survey:
  - question: "What?"
-<<<<<<< HEAD
    answer: ["This","That","The other thing"]
    type: "BUTTON"
  - question: "When?"
    answer: ["1999","Y2k","2001"]
-=======
-   answer: ["this","that","the other thing"]
-   type: "BUTTON"
- - question: "When?"
-   answer: ["1999","y2k","2001"]
->>>>>>> 6b34a168c29ca28073da674238403fadc6a321ba
    type: "RADIO"
  - question: "Why did he do this?"
    answer: ["He was sad","He was happy","He was angry"]
@@ -19,10 +12,7 @@ survey:
  - question: "What is this man feeling??"
    answer: ["Elation", "Happiness", "Indifferent", "Mad", "Furious", "Blech", "Hi"]
    type: "SLIDER"
-<<<<<<< HEAD
  - question: "Write 500 words"
    answer: ["Start Here"]
-   type: "TEXT"
-=======
->>>>>>> 6b34a168c29ca28073da674238403fadc6a321ba
+   type: "Text"
 
