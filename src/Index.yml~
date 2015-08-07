@@ -1,0 +1,18 @@
+videos: [Left, Right, Iso, Front]
+survey:
+ - question: "What?"
+   answer: ["This","That","The other thing"]
+   type: "BUTTON"
+ - question: "When?"
+   answer: ["1999","Y2k","2001"]
+   type: "RADIO"
+ - question: "Why did he do this?"
+   answer: ["He was sad","He was happy","He was angry"]
+   type: "CHECK"
+ - question: "What is this man feeling?"
+   answer: ["Elation", "Happiness", "Indifferent", "Mad", "Furious", "Blech", "Hi"]
+   type: "SLIDER"
+ - question: "Write 500 words"
+   answer: ["Start Here"]
+   type: "TEXT"
+
