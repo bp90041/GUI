@@ -1,11 +1,15 @@
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.HashMap;
+=======
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 
 
 public class Entry {
 
 	private String question;
 	private ArrayList<String> answers;
+<<<<<<< HEAD
 	private HashMap<String, Boolean> selections;
 	private Type type;
 	
@@ -16,15 +20,25 @@ public class Entry {
 		for(String answer : answers){
 			this.selections.put(answer,false);
 		}
+=======
+	private Type type;
+
+	public Entry(String question, ArrayList<String> answers, Type type){
+		this.question = question;
+		this.answers = answers;
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 		this.type = type;
 	}
 	public Entry(String question, ArrayList<String> answers, String style){
 		this.question = question;
 		this.answers = answers;
+<<<<<<< HEAD
 		this.selections = new HashMap<String, Boolean>();
 		for(String answer: answers){
 			this.selections.put(answer, false);
 		}
+=======
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 		if(style.equals("SLIDER")){
 			this.type = Type.SLIDER;	
 		}
@@ -45,6 +59,23 @@ public class Entry {
 		}
 	}
 	
+<<<<<<< HEAD
+=======
+	public ArrayList<String> getAnswers(){
+		if (this.type.equals(Type.SLIDER)){
+			return answers;
+		}
+		else{
+			return answers;
+			
+		}
+	}
+	
+	public void setAnswers(ArrayList<String> answers){
+		this.answers = answers;
+	}
+
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 	public String getQuestion(){
 		return this.question; 
 	}
@@ -60,6 +91,7 @@ public class Entry {
 	public void setType(Type type){
 		this.type = type;
 	}
+<<<<<<< HEAD
 	
 	public ArrayList<String> getAnswers(){
 		return this.answers;
@@ -141,11 +173,18 @@ public class Entry {
 		}
 	}
 	
+=======
+
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 	public String toString(){
 		String name = "";
 		name += "Question: " + this.question.toString() + " ";
 		name += "Type: " + this.type.toString() + " ";
+<<<<<<< HEAD
 		name += "Answers: " + this.selections.toString() + " ";
+=======
+		name += "Answers: " + this.answers.toString() + " ";
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 		return name;
 	}
 

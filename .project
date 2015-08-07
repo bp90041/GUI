@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
+<<<<<<< HEAD
 	<name>ILABannotator</name>
+=======
+<<<<<<< HEAD
+	<name>ILABannotator</name>
+=======
+	<name>InteractionAnnotator</name>
+>>>>>>> 6b34a168c29ca28073da674238403fadc6a321ba
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -13,5 +25,12 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+<<<<<<< HEAD
+=======
+=======
+	</buildSpec>
+	<natures>
+>>>>>>> 6b34a168c29ca28073da674238403fadc6a321ba
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 	</natures>
 </projectDescription>

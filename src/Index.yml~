@@ -9,10 +9,18 @@ survey:
  - question: "Why did he do this?"
    answer: ["He was sad","He was happy","He was angry"]
    type: "CHECK"
+<<<<<<< HEAD
  - question: "What is this man feeling?"
+=======
+ - question: "What is this man feeling??"
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
    answer: ["Elation", "Happiness", "Indifferent", "Mad", "Furious", "Blech", "Hi"]
    type: "SLIDER"
  - question: "Write 500 words"
    answer: ["Start Here"]
+<<<<<<< HEAD
    type: "TEXT"
+=======
+   type: "Text"
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 

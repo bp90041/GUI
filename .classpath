@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+<<<<<<< HEAD
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+=======
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+>>>>>>> 8c28bfea05de559c08f3d6c1e6d9b440e9779fdd
 	<classpathentry kind="lib" path="/home/interaction/Documents/Bhav/UnusedGUI/yamlbeans-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
